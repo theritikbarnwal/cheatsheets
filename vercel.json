@@ -1,7 +1,10 @@
 {
   "version": 2,
-  "name": "-app",
+  "name": "ref-sheets",
   "builds": [
-    { "src": "*.html", "use": "@vercel/static" }
+    {
+      "src": "sheets/*.html",
+      "use": "@vercel/static"
+    }
   ]
 }
