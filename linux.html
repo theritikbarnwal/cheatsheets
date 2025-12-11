@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Linux Cheatsheet - RefSheets</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', sans-serif; transition: background .25s, color .25s; background: var(--bg); color: var(--text); }
+    :root { --bg: #f5f7fb; --text: #111827; --card: #ffffff; --border: #e2e8f0; --accent: #6366f1; --btn: #4f46e5; }
+    .dark { --bg: #0f1115; --text: #f3f4f6; --card: #16181d; --border: #374151; --accent: #818cf8; --btn: #6366f1; }
+    h1, h2 { margin-bottom: 0.5rem; }
+    .section-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: var(--accent); }
+    .card { transition: transform .3s ease, box-shadow .3s ease; border-left: 4px solid var(--accent); padding: 1.5rem; border-radius: 1rem; background: var(--card); border: 1px solid var(--border); }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.12); }
+    .command { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px dashed var(--border); }
+    .command span { display: block; }
+    .command-name { font-family: monospace; font-weight: 500; }
+    .command-desc { font-size: 0.875rem; color: var(--text); opacity: 0.8; }
+    .copy-btn { background: var(--btn); color: white; border-radius: 0.375rem; padding: 0.25rem 0.5rem; cursor: pointer; font-size: 0.75rem; transition: background .2s; }
+    .copy-btn:hover { opacity: 0.9; }
+    .dark .command-desc { color: #d1d5db; }
+    #searchBar { padding: 0.5rem 1rem; border: 1px solid var(--border); border-radius: 0.5rem; margin-bottom: 2rem; width: 100%; }
+  </style>
+</head>
+<body class="min-h-screen px-6 py-10">
+
+  <!-- Header -->
+  <header class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between mb-8 sticky top-0 bg-[var(--bg)] z-50">
+    <div class="flex items-center gap-4 mb-4 sm:mb-0">
+      <div class="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center shadow-md">
+        <i data-lucide="terminal" class="text-white w-6 h-6"></i>
+      </div>
+      <h1 class="text-3xl font-bold tracking-tight">RefSheets - Linux</h1>
+    </div>
+    <button id="themeToggle" class="w-11 h-11 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--card)] hover:opacity-80 transition">
+      <i data-lucide="moon"></i>
+    </button>
+  </header>
+  
+  <!-- Content -->
+  <section class="max-w-6xl mx-auto grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3" id="cheatsheet">
+  </section>
+
+  <script>
+    lucide.createIcons();
+
+    const toggle = document.getElementById('themeToggle');
+    const body = document.body;
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') body.classList.add('dark');
+
+    toggle.addEventListener('click', () => {
+      body.classList.toggle('dark');
+      localStorage.setItem('theme', body.classList.contains('dark') ? 'dark' : 'light');
+      toggle.querySelector('i').setAttribute('data-lucide', body.classList.contains('dark') ? 'sun' : 'moon');
+      lucide.createIcons();
+    });
+
+    const data = {
+      "sections": [
+        {"title": "System Info", "commands": [
+          {"command": "uname -a", "description": "Displays kernel version, OS name, and system architecture."},
+          {"command": "hostname", "description": "Shows the system's hostname."},
+          {"command": "uptime", "description": "Shows system uptime and load averages."},
+          {"command": "who", "description": "Lists currently logged-in users."},
+          {"command": "w", "description": "Shows who is logged in and what they are doing."},
+          {"command": "top", "description": "Interactive display of running processes and resource usage."},
+          {"command": "htop", "description": "Advanced interactive process viewer."},
+          {"command": "free -h", "description": "Shows memory usage in human-readable format."}
+        ]},
+        {"title": "File & Directory", "commands": [
+          {"command": "ls -la", "description": "Lists all files with detailed permissions and ownership."},
+          {"command": "cd /path/to/dir", "description": "Changes directory."},
+          {"command": "pwd", "description": "Shows current working directory."},
+          {"command": "mkdir new_dir", "description": "Creates a new directory."},
+          {"command": "rm -rf dir_name", "description": "Removes a directory and its contents recursively."},
+          {"command": "cp source dest", "description": "Copies a file or directory."},
+          {"command": "mv old new", "description": "Moves or renames a file or directory."},
+          {"command": "find / -name filename", "description": "Searches for a file in the filesystem."},
+          {"command": "du -sh *", "description": "Shows disk usage of files/directories in human-readable format."}
+        ]},
+        {"title": "Package Management", "commands": [
+          {"command": "apt update", "description": "Updates package lists on Debian/Ubuntu."},
+          {"command": "apt install package", "description": "Installs a package."},
+          {"command": "apt remove package", "description": "Removes a package."},
+          {"command": "yum install package", "description": "Installs a package on RHEL/CentOS."},
+          {"command": "dnf install package", "description": "Installs a package on modern RHEL/CentOS."}
+        ]},
+        {"title": "Permissions", "commands": [
+          {"command": "chmod 755 file", "description": "Changes file permissions to rwxr-xr-x."},
+          {"command": "chown user:group file", "description": "Changes file owner and group."}
+        ]},
+        {"title": "Networking", "commands": [
+          {"command": "ip a", "description": "Displays network interfaces and IP addresses."},
+          {"command": "ping google.com", "description": "Tests connectivity to an external host."},
+          {"command": "traceroute example.com", "description": "Shows network path to a host."},
+          {"command": "netstat -tuln", "description": "Displays listening TCP/UDP ports."},
+          {"command": "ss -tuln", "description": "Shows listening sockets (modern replacement for netstat)."},
+          {"command": "curl -I https://example.com", "description": "Fetches HTTP headers from a URL."},
+          {"command": "wget https://example.com", "description": "Downloads a file from a URL."}
+        ]},
+        {"title": "Process & Service Management", "commands": [
+          {"command": "ps aux", "description": "Displays all running processes."},
+          {"command": "kill -9 PID", "description": "Kills a process with a specific PID."},
+          {"command": "systemctl status service", "description": "Shows the status of a service."},
+          {"command": "systemctl restart service", "description": "Restarts a service."},
+          {"command": "jobs", "description": "Lists background jobs."},
+          {"command": "fg %1", "description": "Brings a background job to the foreground."},
+          {"command": "bg %1", "description": "Resumes a job in the background."}
+        ]},
+        {"title": "Logs & Monitoring", "commands": [
+          {"command": "journalctl -u service", "description": "Displays logs for a specific service."},
+          {"command": "tail -f /var/log/syslog", "description": "Follows system log in real-time."},
+          {"command": "dmesg | tail", "description": "Shows latest kernel messages."},
+          {"command": "vmstat 1", "description": "Shows CPU, memory, and I/O stats every second."},
+          {"command": "iostat -x 1", "description": "Displays disk I/O statistics."}
+        ]},
+        {"title": "Users & Groups", "commands": [
+          {"command": "adduser username", "description": "Adds a new user."},
+          {"command": "passwd username", "description": "Changes user password."},
+          {"command": "usermod -aG group user", "description": "Adds a user to a group."},
+          {"command": "groups username", "description": "Shows groups a user belongs to."}
+        ]},
+        {"title": "Disk & Storage", "commands": [
+          {"command": "df -h", "description": "Shows disk usage for mounted filesystems."},
+          {"command": "lsblk", "description": "Lists block devices."},
+          {"command": "mount /dev/sdX /mnt", "description": "Mounts a device to a directory."},
+          {"command": "umount /mnt", "description": "Unmounts a mounted device."}
+        ]},
+        {"title": "Text Processing", "commands": [
+          {"command": "grep 'pattern' file", "description": "Searches for a pattern in a file."},
+          {"command": "awk '{print $1}' file", "description": "Prints first column from file."},
+          {"command": "sed 's/old/new/g' file", "description": "Replaces 'old' with 'new' in a file."},
+          {"command": "cat file", "description": "Displays file contents."},
+          {"command": "head -n 10 file", "description": "Shows first 10 lines of a file."},
+          {"command": "tail -n 10 file", "description": "Shows last 10 lines of a file."}
+        ]}
+      ]
+    };
+
+    const cheatsheetDiv = document.getElementById('cheatsheet');
+
+    function renderSections(filter='') {
+      cheatsheetDiv.innerHTML = '';
+      data.sections.forEach(section => {
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        const title = document.createElement('h2');
+        title.className = 'section-title';
+        title.textContent = section.title;
+        card.appendChild(title);
+
+        section.commands.forEach(cmd => {
+          if (!cmd.command.toLowerCase().includes(filter) && !cmd.description.toLowerCase().includes(filter)) return;
+          const commandDiv = document.createElement('div');
+          commandDiv.className = 'command';
+          
+          const cmdInfo = document.createElement('div');
+          const cmdName = document.createElement('span');
+          cmdName.className = 'command-name';
+          cmdName.textContent = cmd.command;
+          const cmdDesc = document.createElement('span');
+          cmdDesc.className = 'command-desc';
+          cmdDesc.textContent = cmd.description;
+          cmdInfo.appendChild(cmdName);
+          cmdInfo.appendChild(cmdDesc);
+
+          const copyBtn = document.createElement('div');
+          copyBtn.className = 'copy-btn';
+          copyBtn.textContent = 'Copy';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(cmd.command);
+            copyBtn.textContent = 'Copied!';
+            setTimeout(() => copyBtn.textContent = 'Copy', 1000);
+          });
+
+          commandDiv.appendChild(cmdInfo);
+          commandDiv.appendChild(copyBtn);
+          card.appendChild(commandDiv);
+        });
+
+        cheatsheetDiv.appendChild(card);
+      });
+    }
+
+    renderSections();
+
+    const searchBar = document.getElementById('searchBar');
+    searchBar.addEventListener('input', e => {
+      renderSections(e.target.value.toLowerCase());
+    });
+  </script>
+</body>
+</html>
